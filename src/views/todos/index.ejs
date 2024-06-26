@@ -70,14 +70,21 @@
             <div class="card">
                 <div class="card-header bg-light-blue">
                     <div class="row">
-                        <div class="col-md-6 ">
+                        <div class="col-md-4 text-center">
                             <h3>Agregar Tarea</h3>
                             <!-- Button to open the modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addTaskModal">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
-                        <div class="col-md-6 ">
+                        <div class="col-md-4 text-center">
+                            <h3>Actualizar y Eliminar Tarea</h3>
+                            <!-- Button to open the modal -->
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateDeleteTaskModal">
+                                <i class="fas fa-tasks"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-4 text-center">
                             <h3>Buscar Tarea</h3>
                             <!-- Button to open the modal -->
                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#searchTaskModal">
@@ -170,18 +177,6 @@
                         }
                     });
                     </script>
-                    
-
-                    <!-- Botones Actualizar y Eliminar -->
-                    <div class="row mb-2">
-                        <div class="col-md-6">
-                            <h3>Actualizar y Eliminar Tarea</h3>
-                            <!-- Button to open the modal -->
-                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateDeleteTaskModal">
-                                <i class="fas fa-tasks"></i>
-                            </button>
-                        </div>
-                    </div>
 
                     <!-- Modal Actualizar y Eliminar Tarea -->
                     <div class="modal fade" id="updateDeleteTaskModal" tabindex="-1" role="dialog" aria-labelledby="updateDeleteTaskModalLabel" aria-hidden="true">
@@ -253,7 +248,7 @@
                             <li class="list-group-item">
                                 <strong>Título:</strong> <%= todo.title %><br>
                                 <strong>ID:</strong> <%= todo.id %><br>
-                                <strong>Completado:</strong> <%= todo.completed %>
+                                <strong>Completado:</strong> <%= todo.completed ? 'Sí' : 'No' %>
                             </li>
                         <% }); %>
                     </ul>
