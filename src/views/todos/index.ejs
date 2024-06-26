@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #000; /* Fondo negro */
+            color: #000; /* Texto blanco */
+        }
+        .container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .content {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .modal-body {
+            overflow-y: auto;
+        }
+        .card {
+            background-color: #9B86BD; /* Fondo morado pastel */
+            color: #000; /* Texto negro para contraste */
+            border: none;
+        }
+        .section-header {
+            background-color: #9B86BD; /* Color para secciones Agregar Tarea y Buscar Tarea */
+            color: #fff; /* Texto blanco */
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .pastel-background {
+            background-color: #f9f9c5; /* light pastel yellow */
+        }
+        .list-group-item {
+            background-color: #d3e8d3; /* light pastel green */
+            border-color: #d3e8d3;
+        }
+        .list-group-item:nth-child(odd) {
+            background-color: #f9d3e3; /* light pastel pink */
+            border-color: #f9d3e3;
+        }
+        /* Estilo para el fondo azul cielo */
+        .bg-light-blue {
+            background-color: #c4e1ff; /* Color azul cielo */
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px; /* Espacio entre los segmentos */
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">API Todos</span>
+        </div>
+    </nav>
+
+    <div class="container mt-2">
+        <div class="content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6 bg-light-blue">
+                            <h3>Agregar Tarea</h3>
+                            <!-- Button to open the modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addTaskModal">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-6 bg-light-blue">
+                            <h3>Buscar Tarea</h3>
+                            <!-- Button to open the modal -->
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#searchTaskModal">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Modal Agregar Tarea -->
+                    <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title" id="addTaskModalLabel">Agregar Tarea</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/api/v1/todos" method="POST">
+                                        <div class="form-group">
+                                            <label for="title">Título:</label>
+                                            <input type="text" id="title" name="title" class="form-control" required>
+                                        </div>
+                                        <div class="form-group form-check">
+                                            <input type="checkbox" id="completed" name="completed" class="form-check-input">
+                                            <label for="completed" class="form-check-label">Completado</label>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Agregar Tarea</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Buscar Tarea -->
+                    <div class="modal fade" id="searchTaskModal" tabindex="-1" role="dialog" aria-labelledby="searchTaskModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title" id="searchTaskModalLabel">Buscar Tarea por ID</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/api/v1/todos/id" method="POST">
+                                        <div class="form-group">
+                                            <label for="taskId">ID de la Tarea:</label>
+                                            <input type="text" id="taskId" name="taskId" class="form-control" placeholder="Enter Task ID">
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Buscar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones Actualizar y Eliminar -->
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <h3>Actualizar y Eliminar Tarea</h3>
+                            <!-- Button to open the modal -->
+                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateDeleteTaskModal">
+                                <i class="fas fa-tasks"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Modal Actualizar y Eliminar Tarea -->
+                    <div class="modal fade" id="updateDeleteTaskModal" tabindex="-1" role="dialog" aria-labelledby="updateDeleteTaskModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning text-white">
+                                    <h5 class="modal-title" id="updateDeleteTaskModalLabel">Actualizar y Eliminar Tarea</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <ul class="list-group">
+                                        <% todos.forEach(function(todo) { %>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><%= todo.id %> - <%= todo.title %> - <%= todo.completed ? "Completado" : "No Completado" %></span>
+                                                <div>
+                                                    <!-- Botón para actualizar -->
+                                                    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#updateTaskModal-<%= todo.id %>">
+                                                        <i class="fas fa-edit"></i> Actualizar
+                                                    </button>
+                                                    <!-- Formulario para eliminar -->
+                                                    <form action="/api/v1/todos/delete" method="POST" class="d-inline ml-2">
+                                                        <input type="hidden" name="id" value="<%= todo.id %>">
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="fas fa-trash"></i> Eliminar
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </li>
+
+                                            <!-- Modal Actualizar Tarea -->
+                                            <div class="modal fade" id="updateTaskModal-<%= todo.id %>" tabindex="-1" role="dialog" aria-labelledby="updateTaskModalLabel-<%= todo.id %>" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-warning text-white">
+                                                            <h5 class="modal-title" id="updateTaskModalLabel-<%= todo.id %>">Actualizar Tarea</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="/api/v1/todos/<%= todo.id %>?_method=PUT" method="POST">
+                                                                <input type="hidden" name="_method" value="PUT">
+                                                                <div class="form-group">
+                                                                    <label for="title-<%= todo.id %>">Título:</label>
+                                                                    <input type="text" id="title-<%= todo.id %>" name="title" value="<%= todo.title %>" class="form-control">
+                                                                </div>
+                                                                <div class="form-group form-check">
+                                                                    <input type="checkbox" id="completed-<%= todo.id %>" name="completed" <%= todo.completed ? "checked" : "" %> class="form-check-input">
+                                                                    <label for="completed-<%= todo.id %>" class="form-check-label">Completado</label>
+                                                                </div>
+                                                                <button type="submit" class="btn btn-warning">Actualizar Tarea</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="my-2">Informacion</h3>
+                    <ul class="list-group pastel-background">
+                        <% todos.forEach(todo => { %>
+                            <li class="list-group-item">
+                                <strong>Título:</strong> <%= todo.title %><br>
+                                <strong>ID:</strong> <%= todo.id %><br>
+                                <strong>Completado:</strong> <%= todo.completed %>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
