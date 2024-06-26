@@ -125,17 +125,52 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="/api/v1/todos/id" method="POST">
+                                    <form id="searchTaskForm">
                                         <div class="form-group">
                                             <label for="taskId">ID de la Tarea:</label>
                                             <input type="text" id="taskId" name="taskId" class="form-control" placeholder="Enter Task ID">
                                         </div>
                                         <button type="submit" class="btn btn-success">Buscar</button>
                                     </form>
+                                    <div id="taskInfo" class="mt-3" style="display:none;">
+                                        <h5>Información de la Tarea</h5>
+                                        <p><strong>ID:</strong> <span id="taskIdInfo"></span></p>
+                                        <p><strong>Título:</strong> <span id="taskTitleInfo"></span></p>
+                                        <p><strong>Completado:</strong> <span id="taskCompletedInfo"></span></p>
+                                    </div>
+                                    <div id="errorMessage" class="alert alert-danger mt-3" style="display:none;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <script>
+                    document.getElementById('searchTaskForm').addEventListener('submit', async function(event) {
+                        event.preventDefault();
+                        const taskId = document.getElementById('taskId').value;
+                        const response = await fetch('/api/v1/todos/id', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ taskId }),
+                        });
+                    
+                        const data = await response.json();
+                        if (response.ok) {
+                            document.getElementById('taskInfo').style.display = 'block';
+                            document.getElementById('errorMessage').style.display = 'none';
+                            document.getElementById('taskIdInfo').textContent = data.todo.id;
+                            document.getElementById('taskTitleInfo').textContent = data.todo.title;
+                            document.getElementById('taskCompletedInfo').textContent = data.todo.completed ? 'Sí' : 'No';
+                        } else {
+                            document.getElementById('taskInfo').style.display = 'none';
+                            document.getElementById('errorMessage').style.display = 'block';
+                            document.getElementById('errorMessage').textContent = data.errorMessage;
+                        }
+                    });
+                    </script>
+                    
 
                     <!-- Botones Actualizar y Eliminar -->
                     <div class="row mb-2">

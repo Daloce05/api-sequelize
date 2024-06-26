@@ -22,14 +22,17 @@ router.get('/', async (req, res) => {
 })
 
 // Crear una nueva tarea
-router.post('/', async (req, res) => {
+router.post('/id', async (req, res) => {
     try {
-        const { title, completed } = req.body;
-        await todoModel.create({ title, completed: completed || false });
-        res.redirect('/api/v1/todospanel'); // Redirigir a la lista de tareas después de crear una nueva tarea
+        const { taskId } = req.body;
+        const todo = await todoModel.findByPk(taskId);
+        if (!todo) {
+            return res.status(404).json({ errorMessage: 'Tarea no encontrada' });
+        }
+        res.status(200).json({ todo });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al crear una nueva tarea');
+        res.status(500).json({ errorMessage: 'Error al buscar la tarea' });
     }
 });
 
@@ -58,7 +61,7 @@ router.post('/id', async (req, res) => {
         const todo = await todoModel.findByPk(taskId);
         if (!todo) {
             const todos = await todoModel.findAll();
-            return res.render(' todos/index', { todos, todo: null, errorMessage: 'Tarea no encontrada' });
+            return res.render('todos/index', { todos, todo: null, errorMessage: 'Tarea no encontrada' });
         }
         const todos = await todoModel.findAll();
         res.render('todos/index', { todos, todo, errorMessage: null });
@@ -67,7 +70,6 @@ router.post('/id', async (req, res) => {
         res.status(500).send('Error al buscar la tarea');
     }
 });
-
 //store
 router.post('/',async(req,res)=> {
    // const Client = await client.connectClient();
